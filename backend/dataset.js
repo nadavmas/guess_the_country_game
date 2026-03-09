@@ -1,4 +1,4 @@
-export const dataset = [
+const dataset = [
   {
     name: 'Brazil',
     clues: [
@@ -100,4 +100,7 @@ export const dataset = [
     ],
   },
 ];
+
+module.exports = { dataset };
+
 

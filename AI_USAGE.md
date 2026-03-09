@@ -40,3 +40,10 @@ Prompt #3 (Agent):
     create server.js file and leave it empty.
     only create the file do nothing more."
 Cursor created an empty backend/server.js file to prepare for implementing the game API.
+
+Prompt #4 (Plan):
+    "now well start working on the API inside @backend/server.js .
+    - use node.js and express
+    - create an endpoint called game that will choose a random country from the dataset. after that 3 random clues out of the chosen country's 5 clues.
+    -create an endpoint that validates the user's answer."
+Cursor updated backend/dataset.js to use CommonJS exports and implemented an Express server in backend/server.js with GET /game and POST /game/validate endpoints, including basic error handling. After reviewing the code, I cleaned up the code structure and added comments to improve readability and clarity.
