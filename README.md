@@ -1,24 +1,40 @@
 ## Guess The Country
 
-A short description of the Guess The Country project will go here.
+A game where the user gets 3 clues for a random country and has to guess its name.
+
+### Live app
+
+**[https://guessthecountry-ae1n7cgfp-nadavmas-projects.vercel.app](https://guessthecountry-ae1n7cgfp-nadavmas-projects.vercel.app)**
+
+### How to run the project locally
+
+**Prerequisites:** Node.js and npm.
+
+1. Clone the repo (or open the project folder).
+2. From the project root, run: `npm install`.
+3. Run: `node backend/server.js`.
+4. Open `http://localhost:3000` in your browser.
+
+No environment variables are required — the app uses a built-in demo database. To use your own database instead, set `POSTGRES_URL` or `DATABASE_URL` before starting the server. To seed your own database once, run `node backend/seedCountries.js`.
 
 ### Dependencies
 
-- `express` — backend HTTP server
-- `ejs` — server-side templates for the frontend
-- `pg` — PostgreSQL client
+- **express** — HTTP server for the backend.
+- **ejs** — Server-side templates for the frontend.
+- **pg** — PostgreSQL client (connects to Neon when deployed, or the demo/local database when run locally).
 
-### Environment
+### Project structure
 
-The app can run with **no environment variables** (it uses a built-in demo PostgreSQL database). To use your own database instead, set **`POSTGRES_URL`** or **`DATABASE_URL`**; either overrides the demo. Example (PowerShell): `$env:POSTGRES_URL = "postgresql://user:pass@host/db?sslmode=require"`
+The app runs **locally** (Node server with `listen`) or on **Vercel** (serverless). When deployed on Vercel, the database is powered by **Neon** via the `POSTGRES_URL` environment variable provided by the Vercel/Neon integration. Locally, the app uses the same Neon-compatible PostgreSQL — either a built-in demo URL or your own `POSTGRES_URL` / `DATABASE_URL`.
 
-### How to Run
-
-**Prerequisites:** Node.js and npm. From the project root, run `npm install`. The demo DB is already seeded; to seed your own DB, set `POSTGRES_URL` or `DATABASE_URL` and run `node backend/seedCountries.js` once.
-
-- **Zero setup (testers):** Run `node backend/server.js` and open `http://localhost:3000`. No env vars required; the app uses the built-in demo DB. To use your own DB, set `POSTGRES_URL` or `DATABASE_URL` before starting the server.
-- **Vercel:** Deploy the repo to Vercel and set `POSTGRES_URL` in the project's environment variables. The app runs as a serverless function; you do not run `server.js` on Vercel.
-
-### Project Structure
-
-Details about the project structure will be added here.
+| Path | Purpose |
+|------|--------|
+| **api/index.js** | Vercel serverless entry: loads the Express app and exports it so every request is handled by the same app. |
+| **backend/app.js** | Express application: routes (`/`, `/game`, `/game/validate`), middleware, helpers, error handler. No `listen` — used by both the local server and Vercel. |
+| **backend/server.js** | Local-only entry: requires the app and calls `app.listen(PORT)` so you can run the app with `node backend/server.js`. |
+| **backend/db.js** | Database layer: connects to PostgreSQL (Neon when `POSTGRES_URL` or `DATABASE_URL` is set; otherwise a built-in demo URL). Exposes `getRandomCountry` and `getCountryById`. |
+| **backend/seedCountries.js** | One-time script: creates the `countries` table if needed and seeds it with the game data. Run locally when using a new or empty database. |
+| **frontend/index.ejs** | Single EJS template: landing (Start a Game), game view (clues + guess form), and result/error views. |
+| **frontend/styles.css** | Styles for the frontend; served as a static file by Express. |
+| **vercel.json** | Vercel config: rewrites all routes to `/api` so the Express app handles every request on deploy. |
+| **package.json** | npm manifest: project name, dependencies (express, ejs, pg), and scripts. |
