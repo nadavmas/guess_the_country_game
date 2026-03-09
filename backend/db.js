@@ -1,12 +1,11 @@
 const { Pool } = require('pg');
 
-const connectionString = process.env.DATABASE_URL;
+// Prefer POSTGRES_URL (Vercel/Neon) then DATABASE_URL (local or custom)
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 
 if (!connectionString) {
-  // Keeping this explicit so missing config fails fast in development.
-  // For production (e.g. Vercel) DATABASE_URL should also be provided.
   // eslint-disable-next-line no-console
-  console.warn('DATABASE_URL is not set. PostgreSQL access will fail until it is configured.');
+  console.warn('Neither POSTGRES_URL nor DATABASE_URL is set. PostgreSQL access will fail until one is configured.');
 }
 
 const pool = new Pool(
