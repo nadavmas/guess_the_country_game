@@ -40,33 +40,45 @@ function normalizeName(name) {
   return name.trim().toLowerCase();
 }
 
+// base view model for index.ejs so all expected variables are always defined
+const baseViewModel = {
+  countryId: null,
+  clues: null,
+  correct: undefined,
+  correctName: null,
+  error: null,
+};
+
+// renderIndex, renders the index page with the given overrides
+function renderIndex(res, overrides = {}) {
+  return res.render('index', { ...baseViewModel, ...overrides });
+}
+
 //------------ ENDPOINTS ------------
 
 // GET /, renders the index page
 app.get('/', (req, res) => {
-  res.render('index');
+  renderIndex(res);
 });
 
 // GET /game, returns a random country with 3 clues
 app.get('/game', (req, res) => {
   if (!Array.isArray(dataset) || dataset.length === 0) {
-    return res.status(500).render('index', {
-      error: 'Dataset is not available.',
-    });
+    res.status(500);
+    return renderIndex(res, { error: 'Dataset is not available.' });
   }
 
   const randomIndex = getRandomInt(dataset.length);
   const country = dataset[randomIndex];
 
   if (!country || !Array.isArray(country.clues) || country.clues.length < 3) {
-    return res.status(500).render('index', {
-      error: 'Invalid country data.',
-    });
+    res.status(500);
+    return renderIndex(res, { error: 'Invalid country data.' });
   }
 
   const clues = pickRandomClues(country.clues, 3);
 
-  return res.render('index', {
+  return renderIndex(res, {
     countryId: String(randomIndex),
     clues,
   });
@@ -77,30 +89,27 @@ app.post('/game/validate', (req, res) => {
   const { id, guess } = req.body || {};
 
   if (typeof id !== 'string' || typeof guess !== 'string') {
-    return res.status(400).render('index', {
-      error: 'Both id and guess must be provided.',
-    });
+    res.status(400);
+    return renderIndex(res, { error: 'Both id and guess must be provided.' });
   }
 
   const index = Number.parseInt(id, 10);
 
   if (Number.isNaN(index) || index < 0 || index >= dataset.length) {
-    return res.status(400).render('index', {
-      error: 'Invalid game id. Please start a new game.',
-    });
+    res.status(400);
+    return renderIndex(res, { error: 'Invalid game id. Please start a new game.' });
   }
 
   const country = dataset[index];
 
   if (!country || typeof country.name !== 'string') {
-    return res.status(500).render('index', {
-      error: 'Country data is unavailable. Please try again.',
-    });
+    res.status(500);
+    return renderIndex(res, { error: 'Country data is unavailable. Please try again.' });
   }
 
   const isCorrect = normalizeName(country.name) === normalizeName(guess);
 
-  return res.render('index', {
+  return renderIndex(res, {
     correct: isCorrect,
     correctName: country.name,
   });
@@ -113,9 +122,8 @@ app.post('/game/validate', (req, res) => {
 app.use((err, req, res, next) => {
   // eslint-disable-next-line no-console
   console.error('Unexpected error:', err);
-  res.status(500).render('index', {
-    error: 'An unexpected error occurred.',
-  });
+  res.status(500);
+  renderIndex(res, { error: 'An unexpected error occurred.' });
 });
 
 
