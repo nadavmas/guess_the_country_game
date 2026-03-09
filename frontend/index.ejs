@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Guess The Country</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f3f4f6;
+      }
+
+      .page {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        background: #f3f4f6;
+        padding-bottom: 12px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        text-align: center;
+      }
+
+      .subtitle {
+        margin: 4px 0 16px;
+        text-align: center;
+        font-size: 0.95rem;
+        color: #4b5563;
+      }
+
+      .card {
+        background: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        padding: 20px 18px;
+        text-align: center;
+      }
+
+      .section {
+        margin-bottom: 16px;
+      }
+
+      .clues-title {
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      li {
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      input[type='text'] {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 4px;
+        border: 1px solid #d1d5db;
+        font-size: 0.95rem;
+      }
+
+      input[type='text']:focus {
+        outline: 2px solid #111827;
+        outline-offset: 1px;
+      }
+
+      .actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      button,
+      .button-link {
+        appearance: none;
+        border-radius: 999px;
+        border: 1px solid #4b5563;
+        padding: 8px 16px;
+        font-size: 0.95rem;
+        background: #111827;
+        color: #f9fafb;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      button:hover,
+      .button-link:hover {
+        background: #1f2937;
+      }
+
+      .result {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 4px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        font-size: 0.95rem;
+      }
+
+      .error {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 4px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <h1>Guess The Country</h1>
+        <p class="subtitle">Get 3 clues and try to guess the country.</p>
+      </header>
+
+      <div class="card">
+        <% if (!clues && typeof correct === 'undefined' && !error) { %>
+          <!-- Landing state: only Start a Game button -->
+          <div class="section">
+            <form action="/game" method="get">
+              <button type="submit">Start a Game</button>
+            </form>
+          </div>
+        <% } %>
+
+        <% if (clues) { %>
+          <!-- Game state: show clues and guess form -->
+          <div class="section">
+            <div class="clues-title">Your clues:</div>
+            <ul>
+              <% clues.forEach(function (clue) { %>
+                <li><%= clue %></li>
+              <% }); %>
+            </ul>
+          </div>
+
+          <div class="section">
+            <form action="/game/validate" method="post">
+              <input type="hidden" name="id" value="<%= countryId %>" />
+              <label for="guess">Your guess:</label>
+              <input
+                type="text"
+                id="guess"
+                name="guess"
+                placeholder="Type a country name"
+                autocomplete="off"
+              />
+              <div class="actions">
+                <button type="submit">Submit Guess</button>
+              </div>
+            </form>
+          </div>
+        <% } %>
+
+        <% if (typeof correct !== 'undefined') { %>
+          <!-- Result state: show correct/incorrect and options -->
+          <div class="section">
+            <div class="result">
+              <% if (correct) { %>
+                Correct!
+              <% } else { %>
+                wrong. The correct country was <strong><%= correctName %></strong>.
+              <% } %>
+            </div>
+          </div>
+          <div class="section">
+            <div class="actions">
+              <a href="/game" class="button-link">Start New Game</a>
+            </div>
+          </div>
+        <% } %>
+
+        <% if (error) { %>
+          <!-- Error state -->
+          <div class="section">
+            <div class="error"><%= error %></div>
+          </div>
+          <div class="section">
+            <div class="actions">
+              <a href="/game" class="button-link">Start a Game</a>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </body>
+</html>
+

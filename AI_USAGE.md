@@ -83,3 +83,19 @@ Prompt #8 (Agent):
     "I want you to make sure that I always pass all the varibles that the EJS expects, even if they are null"
 
 Cursor updated backend/server.js to introduce a base view model and a renderIndex helper so every render of index.ejs always receives countryId, clues, correct, correctName, and error, preventing undefined template variables.
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #9 (Plan):
+    "now I want to build @frontend/index.ejs from scratch. 
+    - i want the styling to be very simple with no complex implementations such like animations etc.
+    - I want to have the title of the game fixed to the top of the page at all time
+
+    I want you to implement it based on the following flow:
+    - the landing page will consist of only "Start a Game"  button with no extra data.
+    - pressing the button will initialize the endpoint /game 
+    - in /game the 3 clues will appear and under them a text box for the user's guess
+    - When the user submits their answer, the application makes a request to endpoint B, moving from the initial endpoint /game flow to the answer-submission endpoint /game/validate.
+    - from /game/validate the user will have an option to start a new game"
+
+Cursor built frontend/index.ejs with a simple layout, fixed title header, and three states: landing with only a \"Start a Game\" button, game view showing 3 clues and a guess form posting to /game/validate, and result/error views offering a button to start a new game. 
