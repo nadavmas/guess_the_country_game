@@ -1,12 +1,17 @@
+const path = require('path');
 const express = require('express');
 const { dataset } = require('./dataset');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+// set the view engine to ejs
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '..', 'frontend'));
 
-
+// parse urlencoded bodies
+// extended: false means that the parser will not parse the body of the request
+app.use(express.urlencoded({ extended: false }));
 
 //------------ HELPER FUNCTIONS ------------
 
@@ -29,61 +34,73 @@ function pickRandomClues(clues, count = 3) {
   const selectedIndices = indices.slice(0, count);
   return selectedIndices.map((index) => clues[index]);
 }
-  
+
 // normalizeName, returns the name in lowercase and trimmed
 function normalizeName(name) {
   return name.trim().toLowerCase();
 }
 
-
-
 //------------ ENDPOINTS ------------
+
+// GET /, renders the index page
+app.get('/', (req, res) => {
+  res.render('index');
+});
 
 // GET /game, returns a random country with 3 clues
 app.get('/game', (req, res) => {
   if (!Array.isArray(dataset) || dataset.length === 0) {
-    return res.status(500).json({ error: 'Dataset is not available.' });
+    return res.status(500).render('index', {
+      error: 'Dataset is not available.',
+    });
   }
 
   const randomIndex = getRandomInt(dataset.length);
   const country = dataset[randomIndex];
 
   if (!country || !Array.isArray(country.clues) || country.clues.length < 3) {
-    return res.status(500).json({ error: 'Invalid country data.' });
+    return res.status(500).render('index', {
+      error: 'Invalid country data.',
+    });
   }
 
   const clues = pickRandomClues(country.clues, 3);
 
-  return res.json({
-    id: String(randomIndex),
+  return res.render('index', {
+    countryId: String(randomIndex),
     clues,
   });
 });
-
 
 // POST /game/validate, validates the user's guess
 app.post('/game/validate', (req, res) => {
   const { id, guess } = req.body || {};
 
   if (typeof id !== 'string' || typeof guess !== 'string') {
-    return res.status(400).json({ error: 'Both id and guess must be provided as strings.' });
+    return res.status(400).render('index', {
+      error: 'Both id and guess must be provided.',
+    });
   }
 
   const index = Number.parseInt(id, 10);
 
   if (Number.isNaN(index) || index < 0 || index >= dataset.length) {
-    return res.status(400).json({ error: 'Invalid game id.' });
+    return res.status(400).render('index', {
+      error: 'Invalid game id. Please start a new game.',
+    });
   }
 
   const country = dataset[index];
 
   if (!country || typeof country.name !== 'string') {
-    return res.status(500).json({ error: 'Country data is unavailable.' });
+    return res.status(500).render('index', {
+      error: 'Country data is unavailable. Please try again.',
+    });
   }
 
   const isCorrect = normalizeName(country.name) === normalizeName(guess);
 
-  return res.json({
+  return res.render('index', {
     correct: isCorrect,
     correctName: country.name,
   });
@@ -91,18 +108,23 @@ app.post('/game/validate', (req, res) => {
 
 
 //------------ ERROR HANDLING ------------
+
+// handle unexpected errors
 app.use((err, req, res, next) => {
   // eslint-disable-next-line no-console
   console.error('Unexpected error:', err);
-  res.status(500).json({ error: 'An unexpected error occurred.' });
+  res.status(500).render('index', {
+    error: 'An unexpected error occurred.',
+  });
 });
 
 
-
 //------------ START THE SERVER ------------
+// start the server on the port specified in the PORT environment variable
+// if the PORT environment variable is not set, use port 3000
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`Guess The Country API is running on port ${PORT}`);
+  console.log(`Guess The Country game is running on port ${PORT}`);
 });
 
 

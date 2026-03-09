@@ -47,3 +47,12 @@ Prompt #4 (Plan):
     - create an endpoint called game that will choose a random country from the dataset. after that 3 random clues out of the chosen country's 5 clues.
     -create an endpoint that validates the user's answer."
 Cursor updated backend/dataset.js to use CommonJS exports and implemented an Express server in backend/server.js with GET /game and POST /game/validate endpoints, including basic error handling. After reviewing the code, I cleaned up the code structure and added comments to improve readability and clarity.
+
+Prompt #5 (Agent):
+    "I want you to change the GET and POST endpoints in @backend/server.js :
+    instead of using json, i want to use render to pass the data to and from @frontend/index.ejs"
+Cursor refactored backend/server.js so GET /, GET /game, POST /game/validate now render the EJS view in frontend/index.ejs, and implemented index.ejs as a single-page experience with title, start button, clues, guess form, and result/error messages.
+
+Prompt #6 (Agent):
+"title is not relevant because it wont change, Ill have it in the ejs file as simple html"
+Cursor removed the fixed title from the res.render for it to be added as html later on 
