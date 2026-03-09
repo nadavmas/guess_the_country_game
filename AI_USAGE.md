@@ -134,3 +134,29 @@ Prompt #13 (Agent):
     "I dont want to use @backend/dataset.js  anymore and I dont want other people using it too."
 
 Cursor inlined the countries dataset directly into backend/seedCountries.js so it no longer imports backend/dataset.js, and then removed backend/dataset.js entirely so the project now relies only on PostgreSQL as the single source of truth for country data.
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #14 (Agent):
+    "that the postgres url  postgresql://neondb_owner:npg_v8QqCrxf9TpS@ep-summer-sunset-a4n4nuaf-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+    make the adjustments in @backend/server.js  and all the other relevant files following our conversation"
+
+Cursor implemented Option A (use POSTGRES_URL with DATABASE_URL as fallback for Vercel/Neon): updated backend/db.js to set the connection string from process.env.POSTGRES_URL || process.env.DATABASE_URL and adjusted the missing-config warning; updated README.md with an Environment section documenting POSTGRES_URL and DATABASE_URL, added pg to dependencies, and added a one-time seed step (node backend/seedCountries.js) to the How to Run instructions.
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #15 (Agent):
+    "I want to be able to choose to run the project locally or through Vercel. for that i want you to make the adjustments by:
+    splitting the @backend/server.js file into 2 files inside backend - first is app.js that contains all of the routes and the logic that the original server file had, the second is a new server.js that will require app.js in order to run the server locally if i choose to with listen.
+    make these adjustments and all follow-up adjustments needed to achieve my goal."
+
+Cursor split the Express app into backend/app.js (all middleware, helpers, routes, and error handler; no PORT or app.listen; module.exports = app) and backend/server.js (require ./app, PORT, app.listen only). Added api/index.js that requires ../backend/app and exports it for Vercel's serverless handler. Added vercel.json at project root with rewrites so all requests go to /api. Updated README.md "How to Run" with Local (node backend/server.js) vs Vercel (deploy and set POSTGRES_URL; no server.js on Vercel).
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #16 (Agent):
+    "implement Option 1 (demo database fallback) so i can run the project without setting any environment variables, as this database contains no sensitive data. In backend/db.js: Add a constant DEMO_CONNECTION_STRING with [Neon URL]. Use it as a fallback when neither POSTGRES_URL nor DATABASE_URL is set. Always pass a valid connection string to new Pool(). Update the warning so it only logs when the demo fallback is used. Optionally update README.md so 'How to Run' states that testers can run with no env setup and that setting POSTGRES_URL or DATABASE_URL overrides the demo."
+
+Cursor added DEMO_CONNECTION_STRING in backend/db.js as fallback when neither POSTGRES_URL nor DATABASE_URL is set; connectionString is now env || env || DEMO_CONNECTION_STRING and Pool always receives { connectionString }. Warning logs only when demo is used. Updated README.md Environment and How to Run for zero-setup (clone, npm install, node backend/server.js) and that env vars override the demo.
+

@@ -10,21 +10,14 @@ A short description of the Guess The Country project will go here.
 
 ### Environment
 
-Set one of these so the app can connect to PostgreSQL:
-
-- **`POSTGRES_URL`** — used when set (e.g. Vercel + Neon).
-- **`DATABASE_URL`** — used if `POSTGRES_URL` is not set (e.g. local or Docker).
-
-Example (PowerShell): `$env:POSTGRES_URL = "postgresql://user:pass@host/db?sslmode=require"`
+The app can run with **no environment variables** (it uses a built-in demo PostgreSQL database). To use your own database instead, set **`POSTGRES_URL`** or **`DATABASE_URL`**; either overrides the demo. Example (PowerShell): `$env:POSTGRES_URL = "postgresql://user:pass@host/db?sslmode=require"`
 
 ### How to Run
 
-1. **Prerequisites:** Node.js, npm, and a PostgreSQL database (e.g. Neon, local, Docker).
-2. **Set connection:** Set `POSTGRES_URL` or `DATABASE_URL` in your environment.
-3. **Install dependencies:** From the project root, run `npm install`.
-4. **Seed the database (once):** Run `node backend/seedCountries.js`.
-5. **Start the server:** Run `node backend/server.js`.
-6. **Open in browser:** Go to `http://localhost:3000`.
+**Prerequisites:** Node.js and npm. From the project root, run `npm install`. The demo DB is already seeded; to seed your own DB, set `POSTGRES_URL` or `DATABASE_URL` and run `node backend/seedCountries.js` once.
+
+- **Zero setup (testers):** Run `node backend/server.js` and open `http://localhost:3000`. No env vars required; the app uses the built-in demo DB. To use your own DB, set `POSTGRES_URL` or `DATABASE_URL` before starting the server.
+- **Vercel:** Deploy the repo to Vercel and set `POSTGRES_URL` in the project's environment variables. The app runs as a serverless function; you do not run `server.js` on Vercel.
 
 ### Project Structure
 
