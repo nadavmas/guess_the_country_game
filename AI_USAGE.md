@@ -119,3 +119,18 @@ Prompt #11 (Agent):
     i dont want the content to be in a white box, and i want each clue to be in a small round edged box of its own"
 
 Cursor removed the white background and border from the .card in frontend/styles.css so content is no longer inside a white box, and added .clues-list styling so each clue appears in its own small round-edged box (border-radius, light background, padding) in frontend/styles.css and added class=\"clues-list\" to the clues ul in index.ejs.
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #12 (Plan):
+    "Now the development of the project is done, I would like to make a change.
+    at the moment, the dataset is stored inside a js and being stored in-memory during runtime, I want to change it by storing the countries and clues of @backend/dataset.js in a simple postgre databae instead. note: take into consideration that later on we will prepare the project in order to deploy in on Vercel (well do it later, now i want you to focus only on migrating the dataset to Postgre)"
+
+Cursor added PostgreSQL support using pg in backend/db.js, created backend/seedCountries.js to create and seed a countries table from the existing dataset, and refactored backend/server.js so /game and /game/validate now fetch and validate countries using the PostgreSQL database instead of the in-memory dataset.
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #13 (Agent):
+    "I dont want to use @backend/dataset.js  anymore and I dont want other people using it too."
+
+Cursor inlined the countries dataset directly into backend/seedCountries.js so it no longer imports backend/dataset.js, and then removed backend/dataset.js entirely so the project now relies only on PostgreSQL as the single source of truth for country data.

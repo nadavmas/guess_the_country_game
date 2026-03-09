@@ -1,3 +1,5 @@
+const { pool } = require('./db');
+
 const dataset = [
   {
     name: 'Brazil',
@@ -101,6 +103,48 @@ const dataset = [
   },
 ];
 
-module.exports = { dataset };
+async function ensureSchema() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS countries (
+      id SERIAL PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL,
+      clues TEXT[] NOT NULL
+    );
+  `);
+}
 
+async function seedCountries() {
+  for (const country of dataset) {
+    // Upsert by unique country name
+    // If a country already exists, update its clues.
+    // This lets you re-run the seed safely.
+    // eslint-disable-next-line no-await-in-loop
+    await pool.query(
+      `
+        INSERT INTO countries (name, clues)
+        VALUES ($1, $2)
+        ON CONFLICT (name)
+        DO UPDATE SET clues = EXCLUDED.clues;
+      `,
+      [country.name, country.clues],
+    );
+  }
+}
+
+async function main() {
+  try {
+    await ensureSchema();
+    await seedCountries();
+    // eslint-disable-next-line no-console
+    console.log('Countries table has been seeded successfully.');
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to seed countries:', err);
+    process.exitCode = 1;
+  } finally {
+    await pool.end();
+  }
+}
+
+main();
 

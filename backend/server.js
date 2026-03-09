@@ -1,6 +1,6 @@
 const path = require('path');
 const express = require('express');
-const { dataset } = require('./dataset');
+const { getRandomCountry, getCountryById } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -64,58 +64,67 @@ app.get('/', (req, res) => {
   renderIndex(res);
 });
 
-// GET /game, returns a random country with 3 clues
-app.get('/game', (req, res) => {
-  if (!Array.isArray(dataset) || dataset.length === 0) {
-    res.status(500);
-    return renderIndex(res, { error: 'Dataset is not available.' });
+// GET /game, returns a random country with 3 clues (from PostgreSQL)
+app.get('/game', async (req, res, next) => {
+  try {
+    const country = await getRandomCountry();
+
+    if (!country) {
+      res.status(500);
+      return renderIndex(res, { error: 'No countries found in the database.' });
+    }
+
+    const rawClues = Array.isArray(country.clues) ? country.clues : [];
+
+    if (rawClues.length < 3) {
+      res.status(500);
+      return renderIndex(res, { error: 'Country data is incomplete.' });
+    }
+
+    const clues = pickRandomClues(rawClues, 3);
+
+    return renderIndex(res, {
+      countryId: String(country.id),
+      clues,
+    });
+  } catch (err) {
+    return next(err);
   }
-
-  const randomIndex = getRandomInt(dataset.length);
-  const country = dataset[randomIndex];
-
-  if (!country || !Array.isArray(country.clues) || country.clues.length < 3) {
-    res.status(500);
-    return renderIndex(res, { error: 'Invalid country data.' });
-  }
-
-  const clues = pickRandomClues(country.clues, 3);
-
-  return renderIndex(res, {
-    countryId: String(randomIndex),
-    clues,
-  });
 });
 
-// POST /game/validate, validates the user's guess
-app.post('/game/validate', (req, res) => {
-  const { id, guess } = req.body || {};
+// POST /game/validate, validates the user's guess (against PostgreSQL)
+app.post('/game/validate', async (req, res, next) => {
+  try {
+    const { id, guess } = req.body || {};
 
-  if (typeof id !== 'string' || typeof guess !== 'string') {
-    res.status(400);
-    return renderIndex(res, { error: 'Both id and guess must be provided.' });
+    if (typeof id !== 'string' || typeof guess !== 'string') {
+      res.status(400);
+      return renderIndex(res, { error: 'Both id and guess must be provided.' });
+    }
+
+    const numericId = Number.parseInt(id, 10);
+
+    if (Number.isNaN(numericId) || numericId <= 0) {
+      res.status(400);
+      return renderIndex(res, { error: 'Invalid game id. Please start a new game.' });
+    }
+
+    const country = await getCountryById(numericId);
+
+    if (!country || typeof country.name !== 'string') {
+      res.status(500);
+      return renderIndex(res, { error: 'Country data is unavailable. Please try again.' });
+    }
+
+    const isCorrect = normalizeName(country.name) === normalizeName(guess);
+
+    return renderIndex(res, {
+      correct: isCorrect,
+      correctName: country.name,
+    });
+  } catch (err) {
+    return next(err);
   }
-
-  const index = Number.parseInt(id, 10);
-
-  if (Number.isNaN(index) || index < 0 || index >= dataset.length) {
-    res.status(400);
-    return renderIndex(res, { error: 'Invalid game id. Please start a new game.' });
-  }
-
-  const country = dataset[index];
-
-  if (!country || typeof country.name !== 'string') {
-    res.status(500);
-    return renderIndex(res, { error: 'Country data is unavailable. Please try again.' });
-  }
-
-  const isCorrect = normalizeName(country.name) === normalizeName(guess);
-
-  return renderIndex(res, {
-    correct: isCorrect,
-    correctName: country.name,
-  });
 });
 
 
