@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'frontend'));
 
+// serve static assets from the frontend folder (e.g. styles.css)
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
 // parse urlencoded bodies
 // extended: false means that the parser will not parse the body of the request
 app.use(express.urlencoded({ extended: false }));
