@@ -1,6 +1,8 @@
 ## AI Usage
 
-Cursor is being used as an AI assistant during the development of this project.
+Cursor is being used as an AI assistant during the development of this task.
+
+-------------------------------------------------------------------------------------------------------------
 
 Prompt #1 (Agent):
     "Create a full-stack project structure. the goal is only to prepare a clear starting structure for the project.
@@ -10,7 +12,10 @@ Prompt #1 (Agent):
     - a backend folder
     - do not generate the application yet
     - do not add unnecessary dependencies or files" 
-Cursor created empty `frontend` and `backend` folders only. I then reviewed the structure to confirm no extra files or dependencies were added.
+
+    Cursor created empty `frontend` and `backend` folders only. I then reviewed the structure to confirm no extra files or dependencies were added.
+
+-------------------------------------------------------------------------------------------------------------
 
 Prompt #2 (Plan):
     "I am an application that will run the game 'guess the country'. in the game, the user gets 3 clues for a random country, and will need to guess the name of it. 
@@ -98,4 +103,19 @@ Prompt #9 (Plan):
     - When the user submits their answer, the application makes a request to endpoint B, moving from the initial endpoint /game flow to the answer-submission endpoint /game/validate.
     - from /game/validate the user will have an option to start a new game"
 
-Cursor built frontend/index.ejs with a simple layout, fixed title header, and three states: landing with only a \"Start a Game\" button, game view showing 3 clues and a guess form posting to /game/validate, and result/error views offering a button to start a new game. 
+Cursor built frontend/index.ejs with a simple layout, fixed title header, and three states: landing with only a \"Start a Game\" button, game view showing 3 clues and a guess form posting to /game/validate, and result/error views offering a button to start a new game.
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #10 (Agent):
+    "I want the styling of @frontend/index.ejs to be in a new css file"
+
+Cursor moved all inline CSS from index.ejs into frontend/styles.css, linked it in the EJS head with /styles.css, and added express.static in backend/server.js to serve the frontend folder so the stylesheet loads correctly.
+
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #11 (Agent):
+    "I want to make a change small change in the styling: 
+    i dont want the content to be in a white box, and i want each clue to be in a small round edged box of its own"
+
+Cursor removed the white background and border from the .card in frontend/styles.css so content is no longer inside a white box, and added .clues-list styling so each clue appears in its own small round-edged box (border-radius, light background, padding) in frontend/styles.css and added class=\"clues-list\" to the clues ul in index.ejs.

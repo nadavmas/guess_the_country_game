@@ -27,7 +27,7 @@
           <!-- Game state: show clues and guess form -->
           <div class="section">
             <div class="clues-title">Your clues:</div>
-            <ul>
+            <ul class="clues-list">
               <% clues.forEach(function (clue) { %>
                 <li><%= clue %></li>
               <% }); %>
@@ -59,7 +59,7 @@
               <% if (correct) { %>
                 Correct!
               <% } else { %>
-                wrong. The correct country was <strong><%= correctName %></strong>.
+                Wrong. The correct country was <strong><%= correctName %></strong>.
               <% } %>
             </div>
           </div>
