@@ -2,9 +2,10 @@
 
 A short description of the Guess The Country project will go here.
 
-### Setup & Run
+### Dependencies
 
-Instructions for setting up and running the project will be documented here.
+- `express` — backend HTTP server
+- `ejs` — server-side templates for the frontend
 
 ### Project Structure
 
