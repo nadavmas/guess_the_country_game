@@ -12,7 +12,7 @@ Prompt #1 (Agent):
     - do not add unnecessary dependencies or files" 
 Cursor created empty `frontend` and `backend` folders only. I then reviewed the structure to confirm no extra files or dependencies were added.
 
-Prompt #2(Plan):
+Prompt #2 (Plan):
     "I am an application that will run the game 'guess the country'. in the game, the user gets 3 clues for a random country, and will need to guess the name of it. 
 
     first i want to build the dataset. 
@@ -33,3 +33,10 @@ Prompt #2(Plan):
     the clues need to be easy-medium level. 
     i want the dataset to be in a file called dataset.js"
 Cursor created backend/dataset.js with the 10 chosen countries, each having 5 easy–medium clues ready for the game logic.
+
+Prompt #3 (Agent):
+    " i want to start with the backend before doing the frontend. 
+
+    create server.js file and leave it empty.
+    only create the file do nothing more."
+Cursor created an empty backend/server.js file to prepare for implementing the game API.
