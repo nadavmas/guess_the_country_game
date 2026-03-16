@@ -1,15 +1,11 @@
 const { Pool } = require('pg');
 
-// Built-in demo DB for testers (no env vars required). Override with POSTGRES_URL or DATABASE_URL.
-const DEMO_CONNECTION_STRING =
-  'postgresql://neondb_owner:npg_v8QqCrxf9TpS@ep-summer-sunset-a4n4nuaf-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require';
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 
-const connectionString =
-  process.env.POSTGRES_URL || process.env.DATABASE_URL || DEMO_CONNECTION_STRING;
-
-if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
-  // eslint-disable-next-line no-console
-  console.warn('Using built-in demo PostgreSQL connection. Set POSTGRES_URL or DATABASE_URL to use your own DB.');
+if (!connectionString) {
+  throw new Error(
+    'No PostgreSQL connection string configured. Set POSTGRES_URL or DATABASE_URL.',
+  );
 }
 
 const pool = new Pool({ connectionString });
