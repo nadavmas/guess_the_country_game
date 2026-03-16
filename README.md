@@ -4,7 +4,7 @@ A game where the user gets 3 clues for a random country and has to guess its nam
 
 ### Live app
 
-**[https://guessthecountry-ae1n7cgfp-nadavmas-projects.vercel.app](https://guessthecountry-ae1n7cgfp-nadavmas-projects.vercel.app)**
+**[https://guessthecountry-nadavmas.vercel.app](https://guessthecountry-nadavmas.vercel.app)**
 
 ### How to run the project locally
 

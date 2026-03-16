@@ -160,3 +160,10 @@ Prompt #16 (Agent):
 
 Cursor initially implemented a DEMO_CONNECTION_STRING fallback in backend/db.js as described, and updated README.md to document zero-setup usage. Later, at the user's request to remove the fallback and avoid exposing the Neon URL, Cursor refactored backend/db.js so it now requires POSTGRES_URL or DATABASE_URL (no built-in demo connection string), and added a .env file template with POSTGRES_URL= for local configuration.
 
+-------------------------------------------------------------------------------------------------------------
+
+Prompt #17 (Agent):
+    "update in README the link to the live app: https://guessthecountry-nadavmas.vercel.app/"
+
+Cursor updated README.md so the Live app section now points to the deployed Vercel URL https://guessthecountry-nadavmas.vercel.app/ instead of the previous deployment URL.
+
