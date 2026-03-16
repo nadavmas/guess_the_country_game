@@ -12,10 +12,10 @@ A game where the user gets 3 clues for a random country and has to guess its nam
 
 1. Clone the repo (or open the project folder).
 2. From the project root, run: `npm install`.
-3. Run: `node backend/server.js`.
-4. Open `http://localhost:3000` in your browser.
-
-No environment variables are required — the app uses a built-in demo database. To use your own database instead, set `POSTGRES_URL` or `DATABASE_URL` before starting the server. To seed your own database once, run `node backend/seedCountries.js`.
+3. Create a `.env` file in the project root and set `POSTGRES_URL` (or `DATABASE_URL`) to a valid PostgreSQL connection string.
+4. (Optional, once per database) Run: `node backend/seedCountries.js` to create/seed the `countries` table.
+5. Run: `node backend/server.js`.
+6. Open `http://localhost:3000` in your browser.
 
 ### Dependencies
 
@@ -32,7 +32,7 @@ The app runs **locally** (Node server with `listen`) or on **Vercel** (serverles
 | **api/index.js** | Vercel serverless entry: loads the Express app and exports it so every request is handled by the same app. |
 | **backend/app.js** | Express application: routes (`/`, `/game`, `/game/validate`), middleware, helpers, error handler. No `listen` — used by both the local server and Vercel. |
 | **backend/server.js** | Local-only entry: requires the app and calls `app.listen(PORT)` so you can run the app with `node backend/server.js`. |
-| **backend/db.js** | Database layer: connects to PostgreSQL (Neon when `POSTGRES_URL` or `DATABASE_URL` is set; otherwise a built-in demo URL). Exposes `getRandomCountry` and `getCountryById`. |
+| **backend/db.js** | Database layer: connects to PostgreSQL using `POSTGRES_URL` or `DATABASE_URL` (required, no built-in demo URL). Exposes `getRandomCountry` and `getCountryById`. |
 | **backend/seedCountries.js** | One-time script: creates the `countries` table if needed and seeds it with the game data. Run locally when using a new or empty database. |
 | **frontend/index.ejs** | Single EJS template: landing (Start a Game), game view (clues + guess form), and result/error views. |
 | **frontend/styles.css** | Styles for the frontend; served as a static file by Express. |
